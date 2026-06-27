@@ -111,5 +111,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'cloudbridgesolution8483@gmail.com'
-EMAIL_HOST_PASSWORD = 'dxzvnxladdnejryh'
+EMAIL_HOST_PASSWORD = 'xiuifmaqpewbuzhc'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
