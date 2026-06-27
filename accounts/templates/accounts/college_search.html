@@ -1,0 +1,11 @@
+{% extends "accounts/base.html" %}
+{% block title %}Colleges · EduConnect{% endblock %}
+{% block content %}
+<div class="page-title-row"><div><span class="eyebrow dark">College finder</span><h1>Search Colleges</h1><p>Find colleges by name and view complete details.</p></div></div>
+<form method="GET" class="filter-panel mb-4"><input type="text" name="q" value="{{ request.GET.q|default:'' }}" class="form-control form-control-lg" placeholder="Search college name"><button class="btn btn-primary btn-lg btn-pill">Search</button></form>
+<div class="row g-4">
+{% for college in colleges %}
+<div class="col-md-6 col-xl-4"><article class="directory-card"><span class="dir-badge">{{ college.state }}</span><h3>{{ college.name }}</h3><p><i class="bi bi-geo-alt"></i> {{ college.city }}, {{ college.state }}</p><p><i class="bi bi-currency-rupee"></i> Fees: ₹{{ college.fees }}</p><p><i class="bi bi-graph-up"></i> Placement: {{ college.placement_percentage }}%</p><a href="{% url 'college_detail' college.id %}" class="btn btn-primary btn-pill">View Details</a></article></div>
+{% empty %}<div class="col-12"><div class="empty-state">No colleges found.</div></div>{% endfor %}
+</div>
+{% endblock %}

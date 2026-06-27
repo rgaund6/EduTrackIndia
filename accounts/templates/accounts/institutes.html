@@ -1,0 +1,36 @@
+{% extends "accounts/base.html" %}
+{% block title %}Boisar Directory · EduConnect{% endblock %}
+{% block content %}
+<div class="page-title-row">
+    <div><span class="eyebrow dark">Local education directory</span><h1>Boisar & Palghar Schools / Colleges</h1><p>Search imported institute records with category filters.</p></div>
+</div>
+<form method="GET" class="filter-panel mb-4">
+    <input type="text" name="q" value="{{ query|default:'' }}" class="form-control form-control-lg" placeholder="Search institute name">
+    <select name="category" class="form-select form-select-lg">
+        <option value="">All Categories</option>
+        <option value="Pre-Primary Schools" {% if category == 'Pre-Primary Schools' %}selected{% endif %}>Pre-Primary Schools</option>
+        <option value="Primary to Higher Secondary" {% if category == 'Primary to Higher Secondary' %}selected{% endif %}>Primary to Higher Secondary</option>
+        <option value="Colleges" {% if category == 'Colleges' %}selected{% endif %}>Colleges</option>
+    </select>
+    <button class="btn btn-primary btn-lg btn-pill">Search</button>
+</form>
+<div class="row g-4">
+    {% for item in institutes %}
+    <div class="col-md-6 col-xl-4">
+        <article class="directory-card">
+            <span class="dir-badge">{{ item.category }}</span>
+            <h4>
+    <a href="/institute/{{ item.id }}/" class="text-decoration-none">
+        {{ item.name }}
+    </a>
+</h4>
+            <p><i class="bi bi-geo-alt"></i> {{ item.address }}</p>
+            {% if item.contact_number %}<p><i class="bi bi-telephone"></i> {{ item.contact_number }}</p>{% endif %}
+            {% if item.website %}<a href="{{ item.website }}" target="_blank" class="btn btn-outline-primary btn-pill">Official Website</a>{% endif %}
+        </article>
+    </div>
+    {% empty %}
+    <div class="col-12"><div class="empty-state">No institutes found.</div></div>
+    {% endfor %}
+</div>
+{% endblock %}

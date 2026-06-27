@@ -1,0 +1,6 @@
+{% extends "accounts/base.html" %}
+{% block title %}Profile · EduConnect{% endblock %}
+{% block content %}
+<div class="profile-card"><div class="profile-avatar">{{ request.user.username|slice:':1'|upper }}</div><h1>{{ request.user.username }}</h1><p>{{ request.user.email }}</p><span class="badge text-bg-success">Email Verified</span></div>
+<div class="row g-4 mt-1"><div class="col-md-4"><div class="metric-card"><i class="bi bi-phone bg-blue"></i><strong>{{ request.user.mobile }}</strong><span>Mobile</span></div></div><div class="col-md-4"><div class="metric-card"><i class="bi bi-heart bg-purple"></i><strong>{{ saved_count }}</strong><span>Saved Colleges</span></div></div><div class="col-md-4"><div class="metric-card"><i class="bi bi-calendar bg-green"></i><strong>{{ request.user.date_joined|date:'d M Y' }}</strong><span>Joined</span></div></div></div>
+{% endblock %}

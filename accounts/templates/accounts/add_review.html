@@ -1,0 +1,23 @@
+{% extends "accounts/base.html" %}
+{% block title %}Review {{ college.name }}{% endblock %}
+{% block content %}
+<div class="page-title-row">
+    <div><span class="eyebrow dark">Review</span><h1>{{ college.name }}</h1><p>Your review helps improve EduConnect scores. Spam-like reviews are saved for moderation.</p></div>
+</div>
+<div class="content-card">
+    <form method="post">
+        {% csrf_token %}
+        <div class="row g-3">
+            {% for field in form %}
+            <div class="{% if field.name == 'review_text' %}col-12{% else %}col-md-4{% endif %}">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<div class="text-danger small">{{ field.errors|join:", " }}</div>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <button class="btn btn-primary btn-pill mt-4">Submit review</button>
+        <a href="{% url 'college_reviews' college.id %}" class="btn btn-outline-secondary btn-pill mt-4">Cancel</a>
+    </form>
+</div>
+{% endblock %}

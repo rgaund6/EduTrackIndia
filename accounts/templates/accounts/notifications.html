@@ -1,0 +1,6 @@
+{% extends "accounts/base.html" %}
+{% block title %}Notifications · EduConnect{% endblock %}
+{% block content %}
+<div class="page-title-row"><div><span class="eyebrow dark">Updates center</span><h1>Notifications</h1><p>Important admissions, exams and merit list updates.</p></div></div>
+<div class="content-card">{% for n in notifications %}<div class="timeline-item"><i class="bi bi-bell"></i><div><strong>{{ n.title }}</strong><p>{{ n.message }}</p><small>{{ n.created_at }}</small></div></div>{% empty %}<div class="empty-state">No notifications available.</div>{% endfor %}</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "accounts/base.html" %}
+{% block title %}Verify OTP · EduConnect{% endblock %}
+{% block content %}
+<div class="auth-layout single-auth">
+    <div class="auth-card otp-card">
+        <div class="otp-icon"><i class="bi bi-envelope-check"></i></div>
+        <h2>Email OTP Verification</h2>
+        <p class="text-muted">OTP sent to <strong>{{ email }}</strong></p>
+        <form method="POST" action="{% url 'verify_otp' %}" class="mt-4">
+            {% csrf_token %}
+            <input type="text" name="otp" class="form-control form-control-lg text-center otp-input" maxlength="6" placeholder="Enter 6 digit OTP" required>
+            <button type="submit" class="btn btn-success btn-lg btn-pill w-100 mt-3">Verify OTP</button>
+        </form>
+        <p class="text-muted small mt-3 mb-0">Do not use browser back button while verifying OTP. Open this page fresh after registration.</p>
+    </div>
+</div>
+{% endblock %}

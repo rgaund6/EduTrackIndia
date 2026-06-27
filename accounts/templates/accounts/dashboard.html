@@ -1,0 +1,46 @@
+{% extends "accounts/base.html" %}
+{% block title %}Dashboard · EduConnect{% endblock %}
+{% block content %}
+<section class="dashboard-hero">
+    <div>
+        <span class="eyebrow">Verified student dashboard</span>
+        <h1>Welcome, {{ request.user.username }} 👋</h1>
+        <p>Search schools, colleges, exams, saved colleges and recommendations from one premium dashboard.</p>
+    </div>
+    <div class="hero-mini-card"><i class="bi bi-shield-check"></i><strong>Email Verified</strong><span>Secure access enabled</span></div>
+</section>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-xl"><div class="metric-card"><i class="bi bi-bank2 bg-blue"></i><strong>{{ institutes_count }}</strong><span>Boisar Directory</span></div></div>
+    <div class="col-md-6 col-xl"><div class="metric-card"><i class="bi bi-buildings bg-green"></i><strong>{{ colleges }}</strong><span>Colleges</span></div></div>
+    <div class="col-md-6 col-xl"><div class="metric-card"><i class="bi bi-journal-text bg-orange"></i><strong>{{ exams }}</strong><span>Exams</span></div></div>
+    <div class="col-md-6 col-xl"><div class="metric-card"><i class="bi bi-bell bg-purple"></i><strong>{{ notifications_count }}</strong><span>Updates</span></div></div>
+    <div class="col-md-6 col-xl"><div class="metric-card"><i class="bi bi-people bg-slate"></i><strong>{{ students }}</strong><span>Students</span></div></div>
+</div>
+
+<div class="row g-4">
+    <div class="col-xl-7">
+        <div class="content-card">
+            <div class="d-flex justify-content-between align-items-center mb-3"><h2>Quick Actions</h2><span class="badge rounded-pill text-bg-primary">Student Tools</span></div>
+            <div class="quick-grid">
+                <a href="{% url 'institutes' %}" class="quick-action"><i class="bi bi-bank2"></i><strong>Boisar Directory</strong><span>Schools & colleges</span></a>
+                <a href="{% url 'college_search' %}" class="quick-action"><i class="bi bi-buildings"></i><strong>Search Colleges</strong><span>Fees & courses</span></a>
+                <a href="{% url 'recommend' %}" class="quick-action"><i class="bi bi-stars"></i><strong>AI Recommendation</strong><span>Find your fit</span></a>
+                <a href="{% url 'exams' %}" class="quick-action"><i class="bi bi-journal-bookmark"></i><strong>Exam Updates</strong><span>Dates & links</span></a>
+                <a href="{% url 'saved_colleges' %}" class="quick-action"><i class="bi bi-heart"></i><strong>Saved Colleges</strong><span>Your wishlist</span></a>
+                <a href="{% url 'profile' %}" class="quick-action"><i class="bi bi-person"></i><strong>Profile</strong><span>Your details</span></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-5">
+        <div class="content-card h-100">
+            <h2>Latest Updates</h2>
+            <div class="timeline-list">
+                <div class="timeline-item"><i class="bi bi-bank2"></i><div><strong>Boisar directory added</strong><p>Schools and colleges from uploaded sheet imported.</p></div></div>
+                <div class="timeline-item"><i class="bi bi-megaphone"></i><div><strong>Admissions & merit lists</strong><p>Track official notices in notifications.</p></div></div>
+                <div class="timeline-item"><i class="bi bi-journal-text"></i><div><strong>Exam section ready</strong><p>Admin can add CAT, JEE, NEET updates.</p></div></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

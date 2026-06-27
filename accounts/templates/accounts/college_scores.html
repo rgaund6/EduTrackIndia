@@ -1,0 +1,41 @@
+{% extends "accounts/base.html" %}
+{% block title %}EduConnect Scores{% endblock %}
+{% block content %}
+<div class="page-title-row">
+    <div><span class="eyebrow dark">AI ranking</span><h1>College AI Scores</h1><p>Scores use placement 35%, fees 20%, student reviews 20%, faculty 15%, and campus 10%.</p></div>
+</div>
+
+<form class="filter-panel mb-4" method="get">
+    <input class="form-control" name="score" type="number" min="0" max="100" value="{{ filter_score }}" placeholder="Minimum score">
+    <select class="form-select" name="sort">
+        <option value="-overall_score" {% if sort_by == '-overall_score' %}selected{% endif %}>Sort by score</option>
+        <option value="fees" {% if sort_by == 'fees' %}selected{% endif %}>Lowest fees</option>
+        <option value="placement" {% if sort_by == 'placement' %}selected{% endif %}>Highest placement</option>
+    </select>
+    <button class="btn btn-primary btn-pill">Apply</button>
+</form>
+
+<div class="row g-4">
+    {% for college, score in scored_colleges %}
+    <div class="col-md-6 col-xl-4">
+        <article class="directory-card h-100">
+            <span class="dir-badge">{{ score.get_category_display }}</span>
+            <h3>{{ college.name }}</h3>
+            <div class="display-6 fw-bold text-primary">{{ score.overall_score|floatformat:0 }}/100</div>
+            <p class="text-muted">{{ college.city }}, {{ college.state }}</p>
+            <div class="small">
+                <p class="mb-1">Placement: {{ score.placement_score }}/100</p>
+                <p class="mb-1">Fees: {{ score.fees_score }}/100</p>
+                <p class="mb-1">Reviews: {{ score.review_score }}/100</p>
+                <p class="mb-1">Faculty: {{ score.faculty_score }}/100</p>
+                <p class="mb-3">Campus: {{ score.campus_score }}/100</p>
+            </div>
+            <a href="{% url 'college_detail' college.id %}" class="btn btn-primary btn-pill">View College</a>
+            <a href="{% url 'college_reviews' college.id %}" class="btn btn-outline-primary btn-pill">Reviews</a>
+        </article>
+    </div>
+    {% empty %}
+    <div class="col-12"><div class="empty-state">No colleges match this score filter.</div></div>
+    {% endfor %}
+</div>
+{% endblock %}

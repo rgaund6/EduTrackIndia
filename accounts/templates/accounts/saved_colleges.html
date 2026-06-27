@@ -1,0 +1,6 @@
+{% extends "accounts/base.html" %}
+{% block title %}Saved Colleges · EduConnect{% endblock %}
+{% block content %}
+<div class="page-title-row"><div><span class="eyebrow dark">Wishlist</span><h1>Saved Colleges</h1><p>Your shortlisted colleges in one place.</p></div></div>
+<div class="row g-4">{% for item in colleges %}<div class="col-md-6 col-xl-4"><div class="directory-card"><h3>{{ item.college.name }}</h3><p>{{ item.college.city }}, {{ item.college.state }}</p><p>₹{{ item.college.fees }}</p><a href="{% url 'college_detail' item.college.id %}" class="btn btn-primary btn-pill">Open</a></div></div>{% empty %}<div class="empty-state">No saved colleges yet.</div>{% endfor %}</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "accounts/base.html" %}
+{% block title %}{{ college.name }} - EduConnect{% endblock %}
+{% block content %}
+<div class="detail-hero">
+    <span class="eyebrow">College profile</span>
+    <h1>{{ college.name }}</h1>
+    <p>{{ college.city }}, {{ college.state }}</p>
+</div>
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="content-card">
+            <h2>College Details</h2>
+            <div class="info-list">
+                <p><b>Courses:</b> {{ college.courses }}</p>
+                <p><b>Fees:</b> INR {{ college.fees }}</p>
+                <p><b>Placement:</b> {{ college.placement_percentage }}%</p>
+                <p><b>Average Package:</b> INR {{ college.average_package }}</p>
+                <p><b>Hostel:</b> {% if college.hostel_available %}Available{% else %}Not available{% endif %}</p>
+                <p><b>Official Website:</b> <a href="{{ college.official_website }}" target="_blank" rel="noopener">{{ college.official_website }}</a></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="content-card">
+            <h3>Actions</h3>
+            <a href="{% url 'save_college' college.id %}" class="btn btn-danger btn-pill w-100 mb-2">Save College</a>
+            <a href="{% url 'college_reviews' college.id %}" class="btn btn-primary btn-pill w-100 mb-2">Reviews & Score</a>
+            <a href="{% url 'add_review' college.id %}" class="btn btn-outline-primary btn-pill w-100 mb-2">Write Review</a>
+            <a href="{% url 'admission_predictor' %}" class="btn btn-outline-primary btn-pill w-100 mb-2">Predict Admission</a>
+            <a href="{% url 'college_search' %}" class="btn btn-outline-secondary btn-pill w-100">Back to Colleges</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

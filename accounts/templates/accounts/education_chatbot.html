@@ -1,0 +1,149 @@
+{% extends "accounts/base.html" %}
+{% block title %}AI Chatbot - EduConnect{% endblock %}
+{% block extra_head %}
+<style>
+.chat-shell{height:calc(100vh - 210px);min-height:620px;display:grid;grid-template-columns:280px 1fr;gap:1rem}
+.chat-panel{background:#fff;border:1px solid #e8ecf3;border-radius:8px;box-shadow:0 10px 30px rgba(20,31,56,.06)}
+.chat-sidebar{padding:1rem}
+.chat-main{display:flex;flex-direction:column;overflow:hidden}
+.chat-messages{flex:1;overflow:auto;padding:1.25rem;background:#f8fafc}
+.chat-message{display:flex;margin-bottom:1rem}
+.chat-message.user{justify-content:flex-end}
+.bubble{max-width:min(720px,82%);padding:.85rem 1rem;border-radius:8px;white-space:pre-wrap;line-height:1.5}
+.chat-message.user .bubble{background:#3158d4;color:#fff}
+.chat-message.ai .bubble{background:#fff;border:1px solid #e1e7f0;color:#172033}
+.typing{display:none;padding:.85rem 1rem;color:#667085}
+.typing span{display:inline-block;width:7px;height:7px;border-radius:50%;background:#667085;margin-right:3px;animation:pulse 1s infinite}
+.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+@keyframes pulse{50%{opacity:.35;transform:translateY(-3px)}}
+@media(max-width:900px){.chat-shell{grid-template-columns:1fr;height:auto}.chat-sidebar{order:2}.chat-main{min-height:620px}}
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-title-row">
+    <div>
+        <span class="eyebrow dark">AI assistant</span>
+        <h1>Personal Education Chatbot</h1>
+        <p>Ask about colleges, fees, eligibility, exams, career scope, and roadmaps.</p>
+    </div>
+</div>
+
+<div class="chat-shell">
+    <aside class="chat-panel chat-sidebar">
+        <h2 class="h5">Quick Prompts</h2>
+        <div class="d-grid gap-2 my-3">
+            <button class="btn btn-outline-primary text-start prompt-btn" data-prompt="I want BCA college near Mumbai">BCA college near Mumbai</button>
+            <button class="btn btn-outline-primary text-start prompt-btn" data-prompt="Create a roadmap for BSc IT student">BSc IT roadmap</button>
+            <button class="btn btn-outline-primary text-start prompt-btn" data-prompt="Which exams should I prepare for after 12th science?">Entrance exams</button>
+            <button class="btn btn-outline-primary text-start prompt-btn" data-prompt="Compare BCA and BTech CSE career scope">Compare career scope</button>
+        </div>
+        <button class="btn btn-outline-danger w-100" id="clear-chat"><i class="bi bi-trash me-1"></i>Clear chat</button>
+    </aside>
+
+    <section class="chat-panel chat-main">
+        <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="h5 mb-1">EduConnect AI</h2>
+                <p class="text-muted small mb-0">Session {{ chat_session.session_id }}</p>
+            </div>
+            <span class="badge text-bg-success">Context enabled</span>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            {% for message in chat_session.messages %}
+            <div class="chat-message {% if message.sender == 'user' %}user{% else %}ai{% endif %}">
+                <div class="bubble">{{ message.text }}</div>
+            </div>
+            {% empty %}
+            <div class="text-center text-muted py-5" id="empty-chat">
+                Start with a question like "I want BCA college near Mumbai".
+            </div>
+            {% endfor %}
+            <div class="chat-message ai typing" id="typing"><div class="bubble"><span></span><span></span><span></span></div></div>
+        </div>
+        <form class="p-3 border-top" id="chat-form">
+            {% csrf_token %}
+            <input type="hidden" id="session-id" name="session_id" value="{{ chat_session.session_id }}">
+            <div class="input-group input-group-lg">
+                <input class="form-control" id="message-input" name="message" autocomplete="off" placeholder="Ask your education question..." required>
+                <button class="btn btn-primary" id="send-btn" type="submit"><i class="bi bi-send"></i></button>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const chatForm = document.getElementById('chat-form');
+const messages = document.getElementById('chat-messages');
+const input = document.getElementById('message-input');
+const sessionInput = document.getElementById('session-id');
+const typing = document.getElementById('typing');
+const sendBtn = document.getElementById('send-btn');
+
+messages.scrollTop = messages.scrollHeight;
+
+chatForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+    addMessage(text, 'user');
+    input.value = '';
+    typing.style.display = 'flex';
+    messages.scrollTop = messages.scrollHeight;
+    sendBtn.disabled = true;
+
+    const formData = new FormData(chatForm);
+    formData.set('message', text);
+    try {
+        const response = await fetch('{% url "send_chat_message" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value}
+        });
+        const payload = await response.json();
+        if (!payload.success) throw new Error(payload.error || 'Chat failed');
+        sessionInput.value = payload.session_id;
+        addMessage(payload.ai_response, 'ai');
+    } catch (error) {
+        addMessage(error.message, 'ai');
+    } finally {
+        typing.style.display = 'none';
+        sendBtn.disabled = false;
+        input.focus();
+    }
+});
+
+document.querySelectorAll('.prompt-btn').forEach((button) => {
+    button.addEventListener('click', () => {
+        input.value = button.dataset.prompt;
+        chatForm.dispatchEvent(new Event('submit', {cancelable:true}));
+    });
+});
+
+document.getElementById('clear-chat').addEventListener('click', async () => {
+    if (!confirm('Clear this chat history?')) return;
+    const formData = new FormData();
+    formData.append('session_id', sessionInput.value);
+    await fetch('{% url "clear_chat" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value}
+    });
+    messages.querySelectorAll('.chat-message:not(#typing)').forEach((node) => node.remove());
+});
+
+function addMessage(text, sender) {
+    const empty = document.getElementById('empty-chat');
+    if (empty) empty.remove();
+    const row = document.createElement('div');
+    row.className = `chat-message ${sender}`;
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+    row.appendChild(bubble);
+    messages.insertBefore(row, typing);
+    messages.scrollTop = messages.scrollHeight;
+}
+</script>
+{% endblock %}

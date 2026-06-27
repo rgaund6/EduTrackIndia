@@ -1,0 +1,191 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Admission Deadlines - EduConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h1 class="display-5 fw-bold mb-2">📅 Admission Deadlines & Reminders</h1>
+            <p class="text-muted">Never miss an important deadline</p>
+        </div>
+        <div class="col-lg-4 text-end">
+            <a href="{% url 'add_deadline' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Reminder
+            </a>
+        </div>
+    </div>
+
+    <!-- Upcoming Deadlines -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h3 class="text-danger">{{ upcoming_deadlines.count }}</h3>
+                    <p class="text-muted mb-0">Upcoming Deadlines</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h3 class="text-warning">{{ exams.count }}</h3>
+                    <p class="text-muted mb-0">Exam Registrations</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h3 class="text-primary">Setup</h3>
+                    <p class="text-muted mb-0">Email Reminders</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Deadlines Calendar -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar-alt"></i> Upcoming Deadlines
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_deadlines %}
+                        <div class="deadline-timeline">
+                            {% for deadline in upcoming_deadlines %}
+                                {% with days_left=deadline.deadline_date|add:"-now"|add:"day" %}
+                                    <div class="card mb-3 deadline-card">
+                                        <div class="card-body">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-2 text-center">
+                                                    <div class="deadline-date">
+                                                        <div class="display-6 text-danger fw-bold">
+                                                            {{ deadline.deadline_date|date:"d" }}
+                                                        </div>
+                                                        <div class="text-muted small">
+                                                            {{ deadline.deadline_date|date:"M Y" }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <h5 class="card-title mb-1">
+                                                        {{ deadline.deadline_type|title }}
+                                                    </h5>
+                                                    <p class="card-text text-muted mb-2">
+                                                        {{ deadline.description }}
+                                                    </p>
+                                                    {% if deadline.college %}
+                                                        <small class="text-primary">
+                                                            <i class="fas fa-university"></i>
+                                                            {{ deadline.college.name }}
+                                                        </small>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-md-3 text-end">
+                                                    {% with today=now|date:"Y-m-d" %}
+                                                        {% if deadline.deadline_date|date:"Y-m-d" == today %}
+                                                            <span class="badge bg-danger">TODAY!</span>
+                                                        {% elif deadline.deadline_date < today %}
+                                                            <span class="badge bg-secondary">PASSED</span>
+                                                        {% else %}
+                                                            <span class="badge bg-warning">
+                                                                {{ deadline.deadline_date|timeuntil|truncatewords:1 }}
+                                                            </span>
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endwith %}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> No upcoming deadlines. Add one to track it!
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Exam Registrations -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-pencil-alt"></i> Exam Registration Deadlines
+                    </h5>
+                </div>
+                <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                    {% if exams %}
+                        <div class="exam-list">
+                            {% for exam in exams %}
+                                <div class="card mb-2 border-left">
+                                    <div class="card-body py-3">
+                                        <h6 class="card-title mb-1 text-primary">
+                                            {{ exam.name }}
+                                        </h6>
+                                        <p class="card-text small text-muted mb-2">
+                                            <strong>Registration:</strong> {{ exam.registration_last_date|date:"d M Y" }}
+                                        </p>
+                                        <p class="card-text small text-muted mb-2">
+                                            <strong>Exam Date:</strong> {{ exam.exam_date|date:"d M Y" }}
+                                        </p>
+                                        <a href="{{ exam.official_website }}" target="_blank" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-external-link-alt"></i> Register
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted small">No upcoming exam registrations</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Add Deadline Button -->
+            <div class="card shadow-sm border-0 mt-3">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-plus"></i> Add Custom Reminder
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted mb-3">
+                        Track admission dates specific to colleges you're interested in.
+                    </p>
+                    <a href="{% url 'add_deadline' %}" class="btn btn-success w-100">
+                        <i class="fas fa-plus"></i> Add Deadline
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .deadline-card {
+        border-left: 5px solid #dc3545;
+        transition: all 0.3s ease;
+    }
+    .deadline-card:hover {
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.2);
+        transform: translateX(5px);
+    }
+    .deadline-date {
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    .border-left {
+        border-left: 4px solid #ffc107 !important;
+    }
+</style>
+{% endblock %}

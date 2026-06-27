@@ -1,0 +1,295 @@
+{% extends "accounts/base.html" %}
+
+{% block content %}
+<style>
+    .roadmap-view-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .roadmap-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+    }
+
+    .roadmap-header h1 {
+        margin: 0 0 10px;
+        font-size: 28px;
+    }
+
+    .roadmap-header .meta {
+        display: flex;
+        gap: 20px;
+        font-size: 14px;
+        opacity: 0.9;
+        margin-top: 10px;
+    }
+
+    .timeline {
+        position: relative;
+        padding: 20px 0;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 30px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .milestone {
+        margin-bottom: 30px;
+        margin-left: 90px;
+        position: relative;
+    }
+
+    .milestone::before {
+        content: '';
+        position: absolute;
+        left: -60px;
+        top: 20px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: white;
+        border: 3px solid #667eea;
+        box-shadow: 0 0 0 4px #f5f5f5;
+    }
+
+    .milestone-card {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+    }
+
+    .milestone-card:hover {
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        border-color: #667eea;
+    }
+
+    .milestone-month {
+        color: #667eea;
+        font-weight: 700;
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .milestone-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin: 0 0 10px;
+    }
+
+    .milestone-description {
+        color: #666;
+        margin-bottom: 15px;
+        line-height: 1.5;
+    }
+
+    .skills-section {
+        margin: 15px 0;
+    }
+
+    .skills-label {
+        font-weight: 600;
+        color: #667eea;
+        font-size: 13px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .skill-badge {
+        display: inline-block;
+        background: #f0f4ff;
+        color: #667eea;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+
+    .resources-section {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+    }
+
+    .resources-label {
+        font-weight: 600;
+        color: #666;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .resource-item {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 5px;
+    }
+
+    .resource-item::before {
+        content: '📚 ';
+        margin-right: 5px;
+    }
+
+    .progress-circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #f0f4ff;
+        color: #667eea;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .summary-section {
+        background: #f8f9fa;
+        border-left: 4px solid #667eea;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 30px;
+    }
+
+    .summary-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .summary-text {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .back-btn {
+        background: #f0f0f0;
+        color: #333;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-bottom: 20px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .back-btn:hover {
+        background: #667eea;
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .timeline::before {
+            left: 15px;
+        }
+
+        .milestone::before {
+            left: -44px;
+        }
+
+        .milestone {
+            margin-left: 60px;
+        }
+    }
+</style>
+
+<div class="roadmap-view-container">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+
+    <!-- Header -->
+    <div class="roadmap-header">
+        <h1>{{ roadmap.career_goal }}</h1>
+        <div class="meta">
+            <span>📚 {{ roadmap.course }}</span>
+            <span>💡 {{ roadmap.interest }}</span>
+            <span>📅 {{ roadmap.duration_months }} months duration</span>
+            <span>📍 Created {{ roadmap.created_at|date:"d M Y" }}</span>
+        </div>
+    </div>
+
+    <!-- AI Summary -->
+    {% if roadmap.ai_analysis %}
+    <div class="summary-section">
+        <div class="summary-title">✨ AI Analysis</div>
+        <div class="summary-text">{{ roadmap.ai_analysis }}</div>
+    </div>
+    {% endif %}
+
+    <!-- Timeline -->
+    <div class="timeline">
+        {% for milestone in milestones %}
+        <div class="milestone">
+            <div class="milestone-card">
+                <div class="milestone-month">Month {{ milestone.month }}</div>
+                <h3 class="milestone-title">{{ milestone.title }}</h3>
+                <p class="milestone-description">{{ milestone.description }}</p>
+
+                {% if milestone.skills_to_learn %}
+                <div class="skills-section">
+                    <div class="skills-label">📖 Skills to Learn</div>
+                    <div>
+                        {% for skill in milestone.skills_to_learn %}
+                        <span class="skill-badge">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if milestone.resources %}
+                <div class="resources-section">
+                    <div class="resources-label">📚 Resources</div>
+                    {% for resource in milestone.resources %}
+                    <div class="resource-item">{{ resource }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if milestone.completed %}
+                <div style="margin-top: 15px; padding: 10px; background: #d4edda; border-radius: 6px; color: #155724; font-size: 13px; font-weight: 600;">
+                    ✓ Completed on {{ milestone.completed_at|date:"d M Y" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p style="text-align: center; color: #999;">No milestones found</p>
+        {% endfor %}
+    </div>
+
+    <!-- Tips Section -->
+    <div style="margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="summary-section">
+            <div class="summary-title">✅ Success Tips</div>
+            <div style="font-size: 13px; color: #666; line-height: 1.8;">
+                {% for tip in roadmap.roadmap_data.success_tips %}
+                <p style="margin: 8px 0;">✓ {{ tip }}</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="summary-section" style="border-left-color: #ff6b6b;">
+            <div class="summary-title">⚠️ Challenges</div>
+            <div style="font-size: 13px; color: #666; line-height: 1.8;">
+                {% for challenge in roadmap.roadmap_data.challenges %}
+                <p style="margin: 8px 0;">• {{ challenge }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "accounts/base.html" %}
+{% block title %}EduConnect Palghar · Schools, Colleges & Exams{% endblock %}
+{% block content %}
+<section class="landing-hero">
+    <div class="row align-items-center g-5">
+        <div class="col-lg-7">
+            <span class="eyebrow"><i class="bi bi-lightning-charge-fill"></i> Palghar & Boisar Education Hub</span>
+            <h1>Right guidance for a brighter future.</h1>
+            <p class="lead">Find schools, colleges, exam updates, fees, official websites, contacts and AI-based college suggestions in one clean platform.</p>
+            <form action="{% url 'institutes' %}" method="get" class="hero-search">
+                <i class="bi bi-search"></i>
+                <input name="q" type="search" placeholder="Search school, college or institute name">
+                <button class="btn btn-warning btn-lg btn-pill">Search</button>
+            </form>
+            <div class="hero-actions">
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg btn-pill">Get Started</a>
+                <a href="{% url 'institutes' %}" class="btn btn-light btn-lg btn-pill">Explore Directory</a>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="hero-card-stack">
+                <div class="floating-card card-one"><i class="bi bi-bank2"></i><strong>30+</strong><span>Local institutions</span></div>
+                <div class="floating-card card-two"><i class="bi bi-journal-text"></i><strong>Exam alerts</strong><span>CAT, JEE, NEET & more</span></div>
+                <div class="floating-card card-three"><i class="bi bi-stars"></i><strong>AI Match</strong><span>Course & state based suggestions</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-spaced">
+    <div class="section-heading">
+        <span class="eyebrow dark">Explore categories</span>
+        <h2>Everything students need in one place</h2>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-6 col-xl-3"><a href="{% url 'institutes' %}" class="feature-card"><i class="bi bi-bank2 bg-blue"></i><h3>Boisar Directory</h3><p>Schools, pre-primary institutes and colleges with official details.</p></a></div>
+        <div class="col-md-6 col-xl-3"><a href="{% url 'college_search' %}" class="feature-card"><i class="bi bi-buildings bg-green"></i><h3>College Search</h3><p>Search colleges, fees, placements and websites.</p></a></div>
+        <div class="col-md-6 col-xl-3"><a href="{% url 'exams' %}" class="feature-card"><i class="bi bi-journal-bookmark bg-orange"></i><h3>Exam Updates</h3><p>Track registrations, exam dates and official links.</p></a></div>
+        <div class="col-md-6 col-xl-3"><a href="{% url 'recommend' %}" class="feature-card"><i class="bi bi-stars bg-purple"></i><h3>AI Recommendation</h3><p>Find suitable colleges by state, course and rank.</p></a></div>
+    </div>
+</section>
+
+<section class="row g-4 section-spaced">
+    <div class="col-lg-7"><div class="glass-panel"><h2>Why students will love EduConnect</h2><div class="benefit-row"><i class="bi bi-check2-circle"></i><span>Verified email login and protected dashboard</span></div><div class="benefit-row"><i class="bi bi-check2-circle"></i><span>Attractive dashboard with quick actions and updates</span></div><div class="benefit-row"><i class="bi bi-check2-circle"></i><span>Local Boisar/Palghar school and college directory</span></div><div class="benefit-row"><i class="bi bi-check2-circle"></i><span>Saved colleges, profile, analytics and notifications</span></div></div></div>
+    <div class="col-lg-5"><div class="cta-panel"><h2>Ready to start?</h2><p>Create your free account and unlock the student dashboard.</p><a href="{% url 'register' %}" class="btn btn-warning btn-lg btn-pill w-100">Register Now</a></div></div>
+</section>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "accounts/base.html" %}
+{% block title %}Prediction History{% endblock %}
+{% block content %}
+<div class="page-title-row">
+    <div><span class="eyebrow dark">History</span><h1>Admission Predictions</h1><p>All admission predictions saved for your account.</p></div>
+    <a href="{% url 'admission_predictor' %}" class="btn btn-primary btn-pill">New prediction</a>
+</div>
+<div class="content-card">
+    {% for prediction in predictions %}
+    <article class="border rounded-3 p-3 mb-3">
+        <div class="d-flex justify-content-between gap-3">
+            <div>
+                <h2 class="h5">{{ prediction.college.name }}</h2>
+                <p class="text-muted mb-1">{{ prediction.student_name }} - {{ prediction.preferred_course }} - {{ prediction.created_at|date:"d M Y H:i" }}</p>
+                <p>{{ prediction.ai_analysis }}</p>
+                <p class="mb-0"><strong>Cutoff:</strong> {{ prediction.required_cutoff }}</p>
+            </div>
+            <div class="text-end"><div class="display-6 fw-bold">{{ prediction.admission_probability|floatformat:0 }}%</div><span class="badge text-bg-primary">{{ prediction.get_category_type_display }}</span></div>
+        </div>
+    </article>
+    {% empty %}
+    <div class="empty-state">No predictions yet.</div>
+    {% endfor %}
+</div>
+{% endblock %}

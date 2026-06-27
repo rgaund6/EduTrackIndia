@@ -1,0 +1,59 @@
+{% extends "accounts/base.html" %}
+{% block title %}Login · EduConnect{% endblock %}
+{% block content %}
+<div class="auth-layout">
+    <div class="auth-visual">
+        <span class="eyebrow">Student access</span>
+        <h1>Continue your education journey.</h1>
+        <p>Login to search colleges, save favorites, view Boisar institutes and track exam notifications.</p>
+        <div class="auth-points"><span><i class="bi bi-shield-check"></i> Email verified access</span><span><i class="bi bi-stars"></i> AI recommendation</span><span><i class="bi bi-bank2"></i> Local directory</span></div>
+    </div>
+    <div class="auth-card">
+        <h2>Welcome back</h2>
+        <p class="text-muted">Enter your username and password.</p>
+        <form method="POST" class="mt-4">
+            {% csrf_token %}
+            <label class="form-label">Username</label>
+            <input name="username" type="text" class="form-control form-control-lg mb-3" placeholder="Enter username" required>
+            <label class="form-label">Password</label>
+            <div class="position-relative mb-4">
+                <input name="password" type="password" id="login-password" class="form-control form-control-lg" placeholder="Enter password" required>
+                <span class="password-toggle" onclick="togglePassword('login-password', this)">
+                    <i class="bi bi-eye"></i>
+                </span>
+            </div>
+            <button class="btn btn-primary btn-lg btn-pill w-100">Login</button>
+        </form>
+        <p class="mt-4 text-center mb-0">New here? <a href="{% url 'register' %}">Create account</a></p>
+    </div>
+</div>
+
+<style>
+.password-toggle {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888;
+    font-size: 1.1rem;
+    z-index: 10;
+    user-select: none;
+}
+.password-toggle:hover { color: #333; }
+.position-relative input { padding-right: 42px; }
+</style>
+
+<script>
+function togglePassword(fieldId, icon) {
+    const input = document.getElementById(fieldId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerHTML = '<i class="bi bi-eye-slash"></i>';
+    } else {
+        input.type = 'password';
+        icon.innerHTML = '<i class="bi bi-eye"></i>';
+    }
+}
+</script>
+{% endblock %}

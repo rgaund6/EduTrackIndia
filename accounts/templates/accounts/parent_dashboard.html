@@ -1,0 +1,277 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Parent Dashboard - EduConnect{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h1 class="display-5 fw-bold">👨‍👧 Parent Dashboard</h1>
+            <p class="text-muted">Monitor your child's education journey</p>
+        </div>
+    </div>
+
+    <!-- Student Info Card -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user-circle"></i> 
+                                Monitoring: 
+                                <strong>{{ student.first_name|default:student.username }}</strong>
+                            </h5>
+                            <small class="text-muted">Username: {{ student.username }}</small>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            {% if student_profile %}
+                                <small class="text-muted">
+                                    Academic: 
+                                    <span class="badge bg-primary">{{ student_profile.academic_percentage }}%</span>
+                                </small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="text-primary display-6">
+                        <i class="fas fa-bookmark"></i>
+                    </div>
+                    <h3>{{ saved_colleges.count }}</h3>
+                    <p class="text-muted mb-0">Saved Colleges</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="text-success display-6">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>{{ applied_colleges.count }}</h3>
+                    <p class="text-muted mb-0">Applied Colleges</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="text-warning display-6">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>{{ scholarship_apps.count }}</h3>
+                    <p class="text-muted mb-0">Scholarships Applied</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="text-info display-6">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>{{ exam_recommendations.count }}</h3>
+                    <p class="text-muted mb-0">Exams to Prepare</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+            <!-- Student Profile -->
+            {% if student_profile %}
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user"></i> Student Profile
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-2">
+                                    <strong>Course Interest:</strong><br>
+                                    <span class="badge bg-info">{{ student_profile.course_interest|default:"Not set" }}</span>
+                                </p>
+                                <p class="mb-2">
+                                    <strong>Academic Percentage:</strong><br>
+                                    {{ student_profile.academic_percentage }}%
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2">
+                                    <strong>Career Goal:</strong><br>
+                                    {{ student_profile.career_goal|default:"Not set" }}
+                                </p>
+                                <p class="mb-2">
+                                    <strong>Location:</strong><br>
+                                    {{ student_profile.location|default:"Not set" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Saved Colleges -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bookmark"></i> Saved Colleges
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if saved_colleges %}
+                        <div class="row">
+                            {% for saved in saved_colleges %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border">
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ saved.college.name }}</h6>
+                                            <p class="card-text small">
+                                                <strong>Location:</strong> {{ saved.college.city }}, {{ saved.college.state }}<br>
+                                                <strong>Fees:</strong> ₹{{ saved.college.fees }}<br>
+                                                <strong>Placement:</strong> {{ saved.college.placement_percentage }}%
+                                            </p>
+                                            <small class="text-muted">
+                                                Saved: {{ saved.saved_at|date:"d M Y" }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No saved colleges yet</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Applied Colleges -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-university"></i> Applied Colleges
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if applied_colleges %}
+                        <div class="row">
+                            {% for applied in applied_colleges %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h6 class="card-title">{{ applied.college.name }}</h6>
+                                                <span class="badge bg-success">{{ applied.get_status_display }}</span>
+                                            </div>
+                                            <p class="card-text small">
+                                                <strong>Application #:</strong> {{ applied.application_number|default:"—" }}<br>
+                                                <strong>Location:</strong> {{ applied.college.city }}<br>
+                                                <strong>Status:</strong> {{ applied.status|title }}
+                                            </p>
+                                            <small class="text-muted">
+                                                Applied: {{ applied.application_date|date:"d M Y" }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No applications yet</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+            <!-- Upcoming Deadlines -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar-alt"></i> Important Deadlines
+                    </h5>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    {% if upcoming_deadlines %}
+                        {% for deadline in upcoming_deadlines %}
+                            <div class="mb-3 pb-3 border-bottom">
+                                <h6 class="mb-1 text-primary">{{ deadline.deadline_type|title }}</h6>
+                                <p class="mb-2 text-danger">
+                                    <strong>{{ deadline.deadline_date|date:"d M Y" }}</strong>
+                                </p>
+                                <small class="text-muted">{{ deadline.description }}</small>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted small">No upcoming deadlines</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Scholarship Applications -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-award"></i> Scholarships Applied
+                    </h5>
+                </div>
+                <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                    {% if scholarship_apps %}
+                        {% for app in scholarship_apps %}
+                            <div class="mb-2 pb-2 border-bottom">
+                                <h6 class="small mb-1">{{ app.scholarship.name }}</h6>
+                                <small>
+                                    <span class="badge bg-info">{{ app.get_status_display }}</span><br>
+                                    Applied: {{ app.application_date|date:"d M Y" }}
+                                </small>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted small">No scholarship applications</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Exam Recommendations -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-pencil-alt"></i> Exams to Prepare
+                    </h5>
+                </div>
+                <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                    {% if exam_recommendations %}
+                        {% for exam in exam_recommendations %}
+                            <div class="mb-2 pb-2 border-bottom">
+                                <h6 class="small mb-1">{{ exam.exam.name }}</h6>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar"></i> 
+                                    {{ exam.exam.exam_date|date:"d M Y" }}
+                                </small>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted small">No exam recommendations yet</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

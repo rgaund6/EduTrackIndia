@@ -1,0 +1,111 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Student Profile - EduConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-edit"></i> My Profile
+                    </h4>
+                </div>
+
+                <div class="card-body p-4">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Course Interest</label>
+                                <input type="text" name="course_interest" class="form-control" 
+                                       value="{{ student_profile.course_interest }}" 
+                                       placeholder="e.g., BTech CSE, BA Economics">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Career Goal</label>
+                                <input type="text" name="career_goal" class="form-control" 
+                                       value="{{ student_profile.career_goal }}" 
+                                       placeholder="e.g., Software Engineer, Data Scientist">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Academic Percentage (%)</label>
+                                <input type="number" name="academic_percentage" class="form-control" 
+                                       value="{{ student_profile.academic_percentage }}" 
+                                       step="0.01" min="0" max="100"
+                                       placeholder="e.g., 85.5">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Stream</label>
+                                <select name="stream" class="form-select">
+                                    <option value="">Select Stream</option>
+                                    <option value="science" {% if student_profile.stream == 'science' %}selected{% endif %}>
+                                        Science
+                                    </option>
+                                    <option value="commerce" {% if student_profile.stream == 'commerce' %}selected{% endif %}>
+                                        Commerce
+                                    </option>
+                                    <option value="arts" {% if student_profile.stream == 'arts' %}selected{% endif %}>
+                                        Arts
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Location</label>
+                                <input type="text" name="location" class="form-control" 
+                                       value="{{ student_profile.location }}" 
+                                       placeholder="e.g., Mumbai">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Budget (₹)</label>
+                                <input type="number" name="budget" class="form-control" 
+                                       value="{{ student_profile.budget }}" 
+                                       placeholder="e.g., 500000">
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-lightbulb"></i>
+                            <strong>Why fill your profile?</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Get personalized college recommendations</li>
+                                <li>Find scholarships that match your profile</li>
+                                <li>Receive AI-powered career guidance</li>
+                                <li>Get exam recommendations suited for you</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save"></i> Save Profile
+                            </button>
+                            <a href="{% url 'smart_dashboard' %}" class="btn btn-outline-secondary btn-lg">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

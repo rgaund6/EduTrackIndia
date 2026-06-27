@@ -1,0 +1,234 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}AI College Comparison - EduConnect{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-5">
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <h1 class="display-5 fw-bold mb-2">🎯 AI College Comparison</h1>
+            <p class="text-muted">Compare multiple colleges and get AI-powered analysis</p>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="row">
+        <!-- Selection Panel -->
+        <div class="col-lg-3 mb-4">
+            <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">📋 Select Colleges</h5>
+                </div>
+                <div class="card-body" style="max-height: 600px; overflow-y: auto;">
+                    <form method="POST" class="needs-validation">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Choose at least 2 colleges</label>
+                            <div class="list-group">
+                                {% for college in colleges %}
+                                    <div class="form-check">
+                                        <input type="checkbox" name="colleges" value="{{ college.id }}" 
+                                               id="college_{{ college.id }}" class="form-check-input">
+                                        <label class="form-check-label" for="college_{{ college.id }}">
+                                            <span class="fw-bold">{{ college.name }}</span>
+                                            <br>
+                                            <small class="text-muted">{{ college.city }}, {{ college.state }}</small>
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-compare"></i> Compare Selected
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Panel -->
+        <div class="col-lg-9">
+            {% if ai_analysis %}
+                <!-- AI Analysis -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">🤖 AI Analysis & Recommendations</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="analysis-text" style="line-height: 1.8;">
+                            {{ ai_analysis|safe|linebreaks }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Detailed Comparison Tables -->
+            {% if selected_colleges %}
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">📊 Detailed Comparison</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Financial Comparison -->
+                        <h6 class="mb-3">💰 Financial Details</h6>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Metric</th>
+                                        {% for college in selected_colleges %}
+                                            <th>{{ college.name }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Annual Fees</strong></td>
+                                        {% for college in selected_colleges %}
+                                            <td>
+                                                <span class="badge bg-warning">₹{{ college.fees }}</span>
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Hostel Available</strong></td>
+                                        {% for college in selected_colleges %}
+                                            <td>
+                                                {% if college.hostel_available %}
+                                                    <span class="badge bg-success">Yes (₹{{ college.hostel_fees }})</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">No</span>
+                                                {% endif %}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Placement Comparison -->
+                        <h6 class="mb-3">📈 Placement Statistics</h6>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Metric</th>
+                                        {% for college in selected_colleges %}
+                                            <th>{{ college.name }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Placement %</strong></td>
+                                        {% for college in selected_colleges %}
+                                            <td>
+                                                <span class="badge bg-success">{{ college.placement_percentage }}%</span>
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Average Package</strong></td>
+                                        {% for college in selected_colleges %}
+                                            <td>
+                                                <span class="badge bg-info">₹{{ college.average_package }} LPA</span>
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Highest Package</strong></td>
+                                        {% for college in selected_colleges %}
+                                            <td>
+                                                <span class="badge bg-success">₹{{ college.highest_package }} LPA</span>
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Academic & Rating -->
+                        <h6 class="mb-3">⭐ Academic & Ratings</h6>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Metric</th>
+                                        {% for college in selected_colleges %}
+                                            <th>{{ college.name }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Rating</strong></td>
+                                        {% for college in selected_colleges %}
+                                            <td>
+                                                <div class="rating">
+                                                    {% for i in "12345" %}
+                                                        {% if i|add:"0" <= college.rating %}
+                                                            <i class="fas fa-star text-warning"></i>
+                                                        {% else %}
+                                                            <i class="far fa-star text-warning"></i>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    <small class="ms-2">{{ college.rating }}/5</small>
+                                                </div>
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Courses</strong></td>
+                                        {% for college in selected_colleges %}
+                                            <td>
+                                                <small>{{ college.courses|truncatewords:10 }}</small>
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save for Later -->
+                <div class="mt-4">
+                    {% for college in selected_colleges %}
+                        <a href="{% url 'save_college' college.id %}" class="btn btn-outline-primary me-2">
+                            <i class="fas fa-bookmark"></i> Save {{ college.name|truncatewords:3 }}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-primary text-center py-5">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <p>Select at least 2 colleges from the left panel to start comparing</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .analysis-text {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 5px solid #28a745;
+    }
+    .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}

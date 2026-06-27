@@ -1,0 +1,6 @@
+{% extends "accounts/base.html" %}
+{% block title %}Exams · EduConnect{% endblock %}
+{% block content %}
+<div class="page-title-row"><div><span class="eyebrow dark">Exam tracker</span><h1>Latest Exam Updates</h1><p>Track registrations, dates and official exam websites.</p></div></div>
+<div class="row g-4">{% for exam in exams %}<div class="col-md-6"><div class="directory-card"><span class="dir-badge">{{ exam.exam_date }}</span><h3>{{ exam.name }}</h3><p>{{ exam.description }}</p><p><i class="bi bi-calendar-check"></i> Registration Last Date: {{ exam.registration_last_date }}</p><a href="{{ exam.official_website }}" target="_blank" class="btn btn-primary btn-pill">Official Website</a></div></div>{% empty %}<div class="empty-state">No exams added yet.</div>{% endfor %}</div>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EduTrack India{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="{% static 'accounts/css/main.css' %}" rel="stylesheet">
+    <link href="{% static 'accounts/css/ai_features.css' %}" rel="stylesheet">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+<header class="et-navbar">
+    <div class="container-fluid px-3 px-lg-5">
+        <div class="d-flex align-items-center justify-content-between gap-3 py-3">
+            <a class="et-brand" href="{% url 'home' %}">
+                <span class="et-brand-icon"><i class="bi bi-mortarboard-fill"></i></span>
+                <span>EduConnect</span>
+            </a>
+            <form action="{% url 'institutes' %}" method="get" class="et-nav-search d-none d-lg-flex">
+                <i class="bi bi-search"></i>
+                <input type="search" name="q" placeholder="Search colleges, schools, exams...">
+            </form>
+            <div class="d-flex align-items-center gap-2">
+                {% if request.user.is_authenticated %}
+                    <a class="btn btn-light btn-pill d-none d-md-inline-flex" href="{% url 'smart_dashboard' %}"><i class="bi bi-grid me-2"></i>Dashboard</a>
+                    <a class="btn btn-outline-danger btn-pill" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-1"></i>Logout</a>
+                {% else %}
+                    <a class="btn btn-light btn-pill" href="{% url 'login' %}">Login</a>
+                    <a class="btn btn-primary btn-pill" href="{% url 'register' %}">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="et-main">
+    <div class="container-fluid px-3 px-lg-5 py-4">
+        <div class="row g-4">
+            {% if request.user.is_authenticated %}
+            <aside class="col-xl-2 col-lg-3">
+                <nav class="et-sidebar">
+                    <div class="sidebar-user">
+                        <span class="sidebar-avatar">{{ request.user.username|slice:':1'|upper }}</span>
+                        <div>
+                            <small>Welcome back</small>
+                            <strong>{{ request.user.username }}</strong>
+                        </div>
+                    </div>
+
+                    <!-- Main Navigation -->
+                    <h6 class="sidebar-section-title mt-3">MAIN</h6>
+                    <a href="{% url 'smart_dashboard' %}" class="side-link"><i class="fas fa-chart-line"></i> AI Dashboard</a>
+                    <a href="{% url 'student_profile' %}" class="side-link"><i class="fas fa-user-edit"></i> My Profile</a>
+
+                    <!-- AI Features -->
+                    <h6 class="sidebar-section-title mt-4">🤖 AI FEATURES</h6>
+                    <a href="{% url 'scholarship_finder' %}" class="side-link"><i class="fas fa-award"></i> Scholarship Finder</a>
+                    <a href="{% url 'college_comparison' %}" class="side-link"><i class="fas fa-compare"></i> Compare Colleges</a>
+                    <a href="{% url 'admission_predictor' %}" class="side-link"><i class="bi bi-magic"></i> Admission Predictor</a>
+                    <a href="{% url 'education_chatbot' %}" class="side-link"><i class="bi bi-chat-dots"></i> AI Chatbot</a>
+                    <a href="{% url 'career_roadmap' %}" class="side-link"><i class="bi bi-map"></i> Career Roadmap</a>
+                    <a href="{% url 'college_scores' %}" class="side-link"><i class="bi bi-stars"></i> College Scores</a>
+                    <a href="{% url 'cost_calculator' %}" class="side-link"><i class="bi bi-calculator"></i> Cost Calculator</a>
+                    <a href="{% url 'admission_deadlines' %}" class="side-link"><i class="fas fa-calendar"></i> Deadlines</a>
+                    <a href="{% url 'career_guidance' %}" class="side-link"><i class="fas fa-comments"></i> Career Chat</a>
+                    <a href="{% url 'exam_recommendations' %}" class="side-link"><i class="fas fa-pencil-alt"></i> Exam Prep</a>
+
+                    <!-- Existing Features -->
+                    <h6 class="sidebar-section-title mt-4">EXPLORE</h6>
+                    <a href="{% url 'institute_list' %}" class="side-link"><i class="bi bi-bank2"></i> Institutes</a>
+                    <a href="{% url 'college_search' %}" class="side-link"><i class="bi bi-buildings"></i> Colleges</a>
+                    <a href="{% url 'exams' %}" class="side-link"><i class="bi bi-journal-bookmark"></i> Exams</a>
+                    <a href="{% url 'saved_colleges' %}" class="side-link"><i class="bi bi-heart"></i> Saved</a>
+
+                    <!-- Parent Mode -->
+                    <h6 class="sidebar-section-title mt-4">PARENT</h6>
+                    <a href="{% url 'parent_register' %}" class="side-link"><i class="fas fa-users"></i> Parent Mode</a>
+
+                    <!-- Other -->
+                    <h6 class="sidebar-section-title mt-4">MORE</h6>
+                    <a href="{% url 'notifications' %}" class="side-link"><i class="bi bi-bell"></i> Notifications</a>
+                    <a href="{% url 'analytics' %}" class="side-link"><i class="bi bi-bar-chart-line"></i> Analytics</a>
+                    <a href="{% url 'profile' %}" class="side-link"><i class="bi bi-person"></i> Account</a>
+                </nav>
+            </aside>
+
+            <style>
+                .sidebar-section-title {
+                    font-size: 0.75rem;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    color: #999;
+                    padding: 0.5rem 0;
+                    margin-top: 1rem !important;
+                }
+            </style>
+            {% endif %}
+            <section class="{% if request.user.is_authenticated %}col-xl-10 col-lg-9{% else %}col-12{% endif %}">
+                {% if messages %}
+                    <div class="mb-3">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show rounded-4" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% block content %}{% endblock %}
+            </section>
+        </div>
+    </div>
+</main>
+
+<footer class="et-footer">
+    <div class="container-fluid px-3 px-lg-5 d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+        <p class="mb-0">© 2026 EduConnect Palghar. Smart education discovery for students powered by AI.</p>
+        <div class="d-flex gap-3">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'college_search' %}">Colleges</a>
+            <a href="{% url 'exams' %}">Exams</a>
+            <a href="{% url 'scholarship_finder' %}">Scholarships</a>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'accounts/js/app.js' %}"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

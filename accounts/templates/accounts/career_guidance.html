@@ -1,0 +1,142 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}AI Career Guidance - EduConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h4 class="mb-0 text-white">
+                        <i class="fas fa-comments"></i> AI Career Guidance Chatbot
+                    </h4>
+                </div>
+
+                <div class="card-body" style="height: 500px; overflow-y: auto; background-color: #f8f9fa;">
+                    <!-- Chat Messages -->
+                    <div class="chat-messages" id="chat-messages">
+                        {% if messages %}
+                            {% for msg in messages %}
+                                <div class="mb-3">
+                                    {% if msg.role == 'user' %}
+                                        <div class="text-end">
+                                            <div class="d-inline-block bg-primary text-white p-3 rounded" style="max-width: 70%; word-wrap: break-word;">
+                                                {{ msg.content }}
+                                            </div>
+                                            <small class="d-block text-muted mt-1">
+                                                {{ msg.timestamp|date:"g:i A" }}
+                                            </small>
+                                        </div>
+                                    {% else %}
+                                        <div>
+                                            <div class="d-inline-block bg-light p-3 rounded" style="max-width: 70%;">
+                                                <strong class="text-success">AI Assistant:</strong>
+                                                <div class="mt-2" style="white-space: pre-wrap; word-wrap: break-word;">
+                                                    {{ msg.content }}
+                                                </div>
+                                            </div>
+                                            <small class="d-block text-muted mt-1">
+                                                {{ msg.timestamp|date:"g:i A" }}
+                                            </small>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">
+                                    Ask me anything about careers, education, or your future!
+                                </p>
+                                <div class="mt-4">
+                                    <p class="small"><strong>Sample Questions:</strong></p>
+                                    <ul class="list-unstyled small">
+                                        <li>💼 What career options are there after BTech?</li>
+                                        <li>🎓 How do I prepare for competitive exams?</li>
+                                        <li>🚀 What skills do I need for software development?</li>
+                                        <li>📊 Which course is best for data science?</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="card-footer border-top">
+                    <form method="POST" class="input-group">
+                        {% csrf_token %}
+                        <input type="text" name="message" class="form-control" 
+                               placeholder="Ask me about careers, education, skills..." 
+                               autocomplete="off" required>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sidebar Info -->
+            <div class="mt-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-lightbulb"></i> Career Guidance Topics
+                                </h6>
+                            </div>
+                            <div class="card-body small">
+                                <ul class="list-unstyled">
+                                    <li>✓ Entrance Exams</li>
+                                    <li>✓ Career Paths</li>
+                                    <li>✓ Skill Development</li>
+                                    <li>✓ College Selection</li>
+                                    <li>✓ Job Opportunities</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-star"></i> Pro Tips
+                                </h6>
+                            </div>
+                            <div class="card-body small">
+                                <ul class="list-unstyled">
+                                    <li>• Be specific in your questions</li>
+                                    <li>• Share your interests & goals</li>
+                                    <li>• Ask about roadmaps</li>
+                                    <li>• Get skill recommendations</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auto scroll to bottom of chat
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatMessages = document.getElementById('chat-messages');
+        if (chatMessages) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    });
+</script>
+
+<style>
+    .chat-messages {
+        padding: 20px;
+    }
+    .input-group {
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}

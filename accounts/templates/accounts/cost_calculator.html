@@ -1,0 +1,65 @@
+{% extends "accounts/base.html" %}
+{% block title %}Cost Calculator - EduConnect{% endblock %}
+{% block content %}
+<div class="page-title-row">
+    <div><span class="eyebrow dark">Finance planner</span><h1>Education Cost Calculator</h1><p>Calculate total course cost including fees, hostel, travel, books, and other expenses.</p></div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="content-card">
+            <form id="cost-form" action="{% url 'calculate_cost' %}" method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+                {% endfor %}
+                <button class="btn btn-primary btn-pill w-100" type="submit">Calculate total cost</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div id="cost-result" class="content-card d-none"></div>
+        <div class="content-card">
+            <h2 class="h4 mb-3">Recent Calculations</h2>
+            {% for calculation in calculations %}
+            <div class="border rounded-3 p-3 mb-3">
+                <h3 class="h5">{{ calculation.college.name }} - {{ calculation.course_name }}</h3>
+                <p class="mb-1">Annual: INR {{ calculation.annual_total }}</p>
+                <p class="mb-1">Total: INR {{ calculation.total_cost }}</p>
+                <p class="mb-0 fw-bold">Net cost: INR {{ calculation.net_cost }}</p>
+            </div>
+            {% empty %}
+            <div class="empty-state">No calculations yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.getElementById('cost-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const result = document.getElementById('cost-result');
+    const response = await fetch(event.target.action, {method:'POST', body:new FormData(event.target)});
+    const payload = await response.json();
+    result.className = 'content-card';
+    if (!payload.success) {
+        result.innerHTML = `<p class="text-danger mb-0">${payload.error || 'Calculation failed'}</p>`;
+        return;
+    }
+    const data = payload.data;
+    result.innerHTML = `
+        <h2 class="h4">Estimated Cost</h2>
+        <div class="row g-3">
+            <div class="col-md-4"><div class="border rounded-3 p-3"><small>Annual</small><div class="h4">INR ${data.annual_total}</div></div></div>
+            <div class="col-md-4"><div class="border rounded-3 p-3"><small>Total</small><div class="h4">INR ${data.total_cost}</div></div></div>
+            <div class="col-md-4"><div class="border rounded-3 p-3"><small>Net</small><div class="h4">INR ${data.net_cost}</div></div></div>
+        </div>
+        <p class="mt-3 mb-0">Approx monthly planning amount: INR ${data.per_month}</p>`;
+});
+</script>
+{% endblock %}

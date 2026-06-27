@@ -1,0 +1,6 @@
+{% extends "accounts/base.html" %}
+{% block title %}Analytics · EduConnect{% endblock %}
+{% block content %}
+<div class="page-title-row"><div><span class="eyebrow dark">Admin insights</span><h1>Analytics</h1><p>Quick overview of portal records and activity.</p></div></div>
+<div class="row g-4"><div class="col-md-3"><div class="metric-card"><i class="bi bi-people bg-blue"></i><strong>{{ students }}</strong><span>Students</span></div></div><div class="col-md-3"><div class="metric-card"><i class="bi bi-buildings bg-green"></i><strong>{{ colleges }}</strong><span>Colleges</span></div></div><div class="col-md-3"><div class="metric-card"><i class="bi bi-journal-text bg-orange"></i><strong>{{ exams }}</strong><span>Exams</span></div></div><div class="col-md-3"><div class="metric-card"><i class="bi bi-bank2 bg-purple"></i><strong>{{ institutes_count }}</strong><span>Institutes</span></div></div></div>
+{% endblock %}

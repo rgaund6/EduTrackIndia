@@ -1,0 +1,1 @@
+document.addEventListener('DOMContentLoaded', function(){document.querySelectorAll('input, select').forEach(function(el){if(!el.classList.contains('form-control') && !el.classList.contains('form-select')){if(el.tagName==='SELECT')el.classList.add('form-select');else el.classList.add('form-control');}});});

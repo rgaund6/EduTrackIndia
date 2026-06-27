@@ -1,0 +1,198 @@
+{% extends "accounts/base.html" %}
+{% load static %}
+
+{% block title %}AI Scholarship Finder - EduConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h1 class="display-5 fw-bold mb-2">🎓 AI Scholarship Finder</h1>
+            <p class="text-muted">Get personalized scholarship recommendations based on your profile</p>
+        </div>
+        <div class="col-lg-4 text-end">
+            <a href="{% url 'my_scholarships' %}" class="btn btn-outline-primary">
+                <i class="fas fa-bookmark"></i> My Applications
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">📋 Your Profile</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" class="needs-validation">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Category *</label>
+                            <select name="category" class="form-select" required>
+                                <option value="">Select Category</option>
+                                <option value="general">General</option>
+                                <option value="sc_st">SC/ST</option>
+                                <option value="obc">OBC</option>
+                                <option value="minority">Minority</option>
+                                <option value="girl_child">Girl Child</option>
+                                <option value="disability">Person with Disability</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">State *</label>
+                            <input type="text" name="state" class="form-control" placeholder="e.g., Maharashtra" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Family Annual Income (₹) *</label>
+                            <input type="number" name="family_income" class="form-control" placeholder="e.g., 600000" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Course Interest *</label>
+                            <input type="text" name="course" class="form-control" placeholder="e.g., BTech CSE" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Academic Percentage (%) *</label>
+                            <input type="number" name="academic_percentage" class="form-control" 
+                                   placeholder="e.g., 85.5" step="0.01" min="0" max="100" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Find Scholarships
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <!-- AI Analysis -->
+            {% if ai_recommendations %}
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">🤖 AI Analysis & Recommendations</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="recommendation-text" style="line-height: 1.8;">
+                            {{ ai_recommendations|safe|linebreaks }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Eligible Scholarships -->
+            {% if eligible_scholarships %}
+                <h4 class="mb-3 mt-4">
+                    <i class="fas fa-award text-warning"></i> 
+                    Found {{ eligible_scholarships.count }} Eligible Scholarship(s)
+                </h4>
+
+                {% for scholarship in eligible_scholarships %}
+                    <div class="card shadow-sm border-0 mb-3 scholarship-card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h5 class="card-title text-primary">{{ scholarship.name }}</h5>
+                                    <p class="text-muted mb-2">
+                                        <span class="badge bg-info">{{ scholarship.get_category_display }}</span>
+                                        <span class="badge bg-secondary">{{ scholarship.state }}</span>
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>Amount:</strong> ₹{{ scholarship.amount }}
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>Eligibility:</strong> {{ scholarship.eligibility_criteria|truncatewords:30 }}
+                                    </p>
+                                    <p class="mb-0 text-danger">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <strong>Deadline:</strong> {{ scholarship.application_deadline|date:"d M Y" }}
+                                    </p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <a href="{% url 'apply_scholarship' scholarship.id %}" class="btn btn-success mb-2">
+                                        <i class="fas fa-hand-paper"></i> Apply Now
+                                    </a>
+                                    <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" 
+                                            data-bs-target="#details{{ scholarship.id }}">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Details Modal -->
+                    <div class="modal fade" id="details{{ scholarship.id }}" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">{{ scholarship.name }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <h6>Required Documents:</h6>
+                                    <p>{{ scholarship.required_documents }}</p>
+                                    
+                                    <h6>Application Steps:</h6>
+                                    <p>{{ scholarship.application_steps }}</p>
+                                    
+                                    <h6>Contact Information:</h6>
+                                    <p>
+                                        {% if scholarship.contact_email %}
+                                            Email: <a href="mailto:{{ scholarship.contact_email }}">{{ scholarship.contact_email }}</a><br>
+                                        {% endif %}
+                                        {% if scholarship.contact_phone %}
+                                            Phone: {{ scholarship.contact_phone }}<br>
+                                        {% endif %}
+                                        {% if scholarship.website_url %}
+                                            Website: <a href="{{ scholarship.website_url }}" target="_blank">{{ scholarship.website_url }}</a>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% elif request.method == 'POST' %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> No scholarships found matching your criteria. 
+                    Try adjusting your filters or check back later.
+                </div>
+            {% else %}
+                <div class="alert alert-primary">
+                    <i class="fas fa-lightbulb"></i> Fill in your profile details on the left to find scholarships you're eligible for!
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .scholarship-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .scholarship-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important;
+    }
+    .recommendation-text {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        border-left: 4px solid #28a745;
+    }
+</style>
+{% endblock %}

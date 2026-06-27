@@ -1,0 +1,76 @@
+{% extends "accounts/base.html" %}
+{% block title %}Career Roadmap - EduConnect{% endblock %}
+{% block content %}
+<div class="page-title-row">
+    <div>
+        <span class="eyebrow dark">AI planning</span>
+        <h1>Career Roadmap Generator</h1>
+        <p>Generate and save month-wise plans based on your course, interests, skills, and goal.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="content-card">
+            <h2 class="h4 mb-3">Create Roadmap</h2>
+            <form id="roadmap-form" action="{% url 'generate_roadmap' %}" method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+                {% endfor %}
+                <button class="btn btn-primary btn-pill w-100" id="roadmap-btn" type="submit">
+                    <i class="bi bi-map me-1"></i> Generate Roadmap
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="content-card">
+            <h2 class="h4 mb-3">Saved Roadmaps</h2>
+            {% for roadmap in roadmaps %}
+            <article class="border rounded-3 p-3 mb-3">
+                <div class="d-flex justify-content-between gap-3">
+                    <div>
+                        <h3 class="h5 mb-1">{{ roadmap.career_goal }}</h3>
+                        <p class="text-muted mb-2">{{ roadmap.course }} - {{ roadmap.interest }}</p>
+                        <p class="mb-0">{{ roadmap.ai_analysis|default:"Roadmap generated and saved." }}</p>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge text-bg-primary">{{ roadmap.duration_months }} months</span>
+                        <a href="{% url 'view_roadmap' roadmap.id %}" class="btn btn-outline-primary btn-sm btn-pill d-block mt-3">Open</a>
+                    </div>
+                </div>
+            </article>
+            {% empty %}
+            <div class="empty-state">No saved roadmaps yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const roadmapForm = document.getElementById('roadmap-form');
+const roadmapBtn = document.getElementById('roadmap-btn');
+roadmapForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    roadmapBtn.disabled = true;
+    roadmapBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating...';
+    try {
+        const response = await fetch(roadmapForm.action, {method: 'POST', body: new FormData(roadmapForm)});
+        const payload = await response.json();
+        if (!payload.success) throw new Error(payload.error || 'Could not generate roadmap');
+        window.location.href = payload.redirect_url || `/roadmap/${payload.roadmap_id}/`;
+    } catch (error) {
+        alert(error.message);
+    } finally {
+        roadmapBtn.disabled = false;
+        roadmapBtn.innerHTML = '<i class="bi bi-map me-1"></i> Generate Roadmap';
+    }
+});
+</script>
+{% endblock %}
