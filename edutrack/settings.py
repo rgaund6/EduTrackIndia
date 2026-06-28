@@ -113,3 +113,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'cloudbridgesolution8483@gmail.com'
 EMAIL_HOST_PASSWORD = 'xiuifmaqpewbuzhc'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+STATIC_ROOT = BASE_DIR / 'staticfiles'
